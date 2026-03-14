@@ -1,5 +1,9 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+# Look for .env in both project root and backend/ (local dev vs Render)
+_env_files = [p for p in (Path("backend/.env"), Path(".env")) if p.is_file()]
 
 
 class Settings(BaseSettings):
@@ -21,7 +25,7 @@ class Settings(BaseSettings):
     MOCK_HRMS_ENABLED: bool = True
     MOCK_GMAIL_ENABLED: bool = True
 
-    model_config = {"env_file": "backend/.env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": _env_files or ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
 @lru_cache
