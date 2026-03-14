@@ -180,6 +180,44 @@ async def update_candidate(
     )
 
 
+@router.delete("/cleanup/unknowns")
+async def cleanup_unknowns(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete all candidates with name 'Unknown' and status 'needs_review'."""
+    from sqlalchemy import delete, or_, and_
+
+    result = await db.execute(
+        select(func.count(Candidate.id)).where(
+            and_(
+                or_(
+                    func.lower(Candidate.full_name) == "unknown",
+                    Candidate.full_name.is_(None),
+                ),
+                Candidate.ingestion_status == "needs_review",
+            )
+        )
+    )
+    count = result.scalar_one()
+
+    if count > 0:
+        await db.execute(
+            delete(Candidate).where(
+                and_(
+                    or_(
+                        func.lower(Candidate.full_name) == "unknown",
+                        Candidate.full_name.is_(None),
+                    ),
+                    Candidate.ingestion_status == "needs_review",
+                )
+            )
+        )
+        await db.commit()
+
+    return {"deleted": count}
+
+
 @router.delete("/{candidate_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_candidate(
     candidate_id: str,
