@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { prefetch } from "@/lib/api";
+import { useCallback } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -17,6 +19,20 @@ import {
   ArrowLeftRight,
   UserPlus,
 } from "lucide-react";
+
+/** Map route → API endpoints to prefetch on hover. */
+const PREFETCH_MAP: Record<string, string[]> = {
+  "/dashboard": ["/api/analytics/overview", "/api/activity?limit=6"],
+  "/candidates": ["/api/candidates?limit=50&status=active"],
+  "/search": [],
+  "/upload": [],
+  "/dedup": ["/api/dedup?status=pending"],
+  "/jobs": ["/api/jobs"],
+  "/shortlists": ["/api/shortlists"],
+  "/analytics": ["/api/analytics/overview"],
+  "/activity": ["/api/activity?limit=50"],
+  "/referrals": ["/api/referrals"],
+};
 
 const navGroups = [
   {
@@ -50,6 +66,13 @@ const navGroups = [
 export function Sidebar() {
   const pathname = usePathname();
 
+  const handleMouseEnter = useCallback((href: string) => {
+    const endpoints = PREFETCH_MAP[href];
+    if (endpoints) {
+      endpoints.forEach(prefetch);
+    }
+  }, []);
+
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-[220px] flex-col bg-sidebar">
       {/* Logo — links to landing page */}
@@ -76,6 +99,8 @@ export function Sidebar() {
                   <Link
                     key={href}
                     href={href}
+                    prefetch={true}
+                    onMouseEnter={() => handleMouseEnter(href)}
                     className={cn(
                       "group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all duration-200",
                       active

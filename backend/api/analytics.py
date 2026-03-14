@@ -1,5 +1,7 @@
+import asyncio
+
 from fastapi import APIRouter, Depends
-from sqlalchemy import select, func, cast, Date, case, literal
+from sqlalchemy import select, func, cast, Date, case
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.core.auth import get_current_user
@@ -20,77 +22,86 @@ async def analytics_overview(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Aggregated analytics: totals, source breakdown, ingestion trends, skills, locations."""
+    """Aggregated analytics — all queries run in parallel for speed."""
 
-    # Total candidates (exclude merged)
-    total_candidates_result = await db.execute(
-        select(func.count(Candidate.id)).where(Candidate.ingestion_status != "merged")
+    # Run all independent queries concurrently
+    (
+        total_candidates_r,
+        total_shortlists_r,
+        total_merged_r,
+        avg_conf_r,
+        source_r,
+        trend_r,
+        status_r,
+        loc_r,
+        exp_r,
+    ) = await asyncio.gather(
+        db.execute(
+            select(func.count(Candidate.id)).where(Candidate.ingestion_status != "merged")
+        ),
+        db.execute(select(func.count(Shortlist.id))),
+        db.execute(select(func.count(CandidateMergeHistory.id))),
+        db.execute(
+            select(func.avg(Candidate.confidence_score)).where(
+                Candidate.confidence_score.isnot(None),
+                Candidate.ingestion_status != "merged",
+            )
+        ),
+        db.execute(
+            select(Candidate.source, func.count(Candidate.id))
+            .where(Candidate.ingestion_status != "merged")
+            .group_by(Candidate.source)
+            .order_by(func.count(Candidate.id).desc())
+        ),
+        db.execute(
+            select(
+                cast(Candidate.created_at, Date).label("date"),
+                func.count(Candidate.id).label("count"),
+            )
+            .where(Candidate.ingestion_status != "merged")
+            .group_by(cast(Candidate.created_at, Date))
+            .order_by(cast(Candidate.created_at, Date).desc())
+            .limit(30)
+        ),
+        db.execute(
+            select(Candidate.ingestion_status, func.count(Candidate.id))
+            .group_by(Candidate.ingestion_status)
+            .order_by(func.count(Candidate.id).desc())
+        ),
+        db.execute(
+            select(Candidate.location, func.count(Candidate.id))
+            .where(
+                Candidate.location.isnot(None),
+                Candidate.location != "",
+                Candidate.ingestion_status != "merged",
+            )
+            .group_by(Candidate.location)
+            .order_by(func.count(Candidate.id).desc())
+            .limit(8)
+        ),
+        db.execute(
+            select(
+                case(
+                    (Candidate.years_experience < 2, "0-2 yrs"),
+                    (Candidate.years_experience < 5, "2-5 yrs"),
+                    (Candidate.years_experience < 8, "5-8 yrs"),
+                    (Candidate.years_experience < 12, "8-12 yrs"),
+                    else_="12+ yrs",
+                ).label("bucket"),
+                func.count(Candidate.id).label("count"),
+            )
+            .where(
+                Candidate.years_experience.isnot(None),
+                Candidate.ingestion_status != "merged",
+            )
+            .group_by("bucket")
+            .order_by("bucket")
+        ),
     )
-    total_candidates = total_candidates_result.scalar_one()
 
-    # Total shortlists
-    total_shortlists_result = await db.execute(
-        select(func.count(Shortlist.id))
-    )
-    total_shortlists = total_shortlists_result.scalar_one()
-
-    # Total merged (from merge history table, not ingestion_status)
-    merged_result = await db.execute(
-        select(func.count(CandidateMergeHistory.id))
-    )
-    total_merged = merged_result.scalar_one()
-
-    # Avg confidence
-    avg_conf_result = await db.execute(
-        select(func.avg(Candidate.confidence_score)).where(
-            Candidate.confidence_score.isnot(None),
-            Candidate.ingestion_status != "merged",
-        )
-    )
-    avg_confidence = avg_conf_result.scalar_one()
-
-    # Candidates by source
-    source_result = await db.execute(
-        select(Candidate.source, func.count(Candidate.id))
-        .where(Candidate.ingestion_status != "merged")
-        .group_by(Candidate.source)
-        .order_by(func.count(Candidate.id).desc())
-    )
-    sources = [
-        SourceBreakdown(source=row[0], count=row[1])
-        for row in source_result.all()
-    ]
-
-    # Ingestion trends (last 30 days)
-    trend_result = await db.execute(
-        select(
-            cast(Candidate.created_at, Date).label("date"),
-            func.count(Candidate.id).label("count"),
-        )
-        .where(Candidate.ingestion_status != "merged")
-        .group_by(cast(Candidate.created_at, Date))
-        .order_by(cast(Candidate.created_at, Date).desc())
-        .limit(30)
-    )
-    trends = [
-        IngestionTrend(date=str(row.date), count=row.count)
-        for row in trend_result.all()
-    ]
-
-    # Status breakdown
-    status_result = await db.execute(
-        select(Candidate.ingestion_status, func.count(Candidate.id))
-        .group_by(Candidate.ingestion_status)
-        .order_by(func.count(Candidate.id).desc())
-    )
-    statuses = [
-        StatusBreakdown(status=row[0], count=row[1])
-        for row in status_result.all()
-    ]
-
-    # Top skills (unnest JSONB array, count occurrences)
+    # Skills query separately (can fail on empty JSONB)
     try:
-        skill_result = await db.execute(
+        skill_r = await db.execute(
             select(
                 func.jsonb_array_elements_text(Candidate.skills).label("skill"),
                 func.count().label("cnt"),
@@ -103,53 +114,21 @@ async def analytics_overview(
             .order_by(func.count().desc())
             .limit(12)
         )
-        top_skills = [
-            SkillCount(skill=row.skill, count=row.cnt)
-            for row in skill_result.all()
-        ]
+        top_skills = [SkillCount(skill=r.skill, count=r.cnt) for r in skill_r.all()]
     except Exception:
         top_skills = []
 
-    # Top locations
-    loc_result = await db.execute(
-        select(Candidate.location, func.count(Candidate.id))
-        .where(
-            Candidate.location.isnot(None),
-            Candidate.location != "",
-            Candidate.ingestion_status != "merged",
-        )
-        .group_by(Candidate.location)
-        .order_by(func.count(Candidate.id).desc())
-        .limit(8)
-    )
-    top_locations = [
-        LocationCount(location=row[0], count=row[1])
-        for row in loc_result.all()
-    ]
+    # Extract results
+    total_candidates = total_candidates_r.scalar_one()
+    total_shortlists = total_shortlists_r.scalar_one()
+    total_merged = total_merged_r.scalar_one()
+    avg_confidence = avg_conf_r.scalar_one()
 
-    # Experience distribution buckets
-    exp_result = await db.execute(
-        select(
-            case(
-                (Candidate.years_experience < 2, "0-2 yrs"),
-                (Candidate.years_experience < 5, "2-5 yrs"),
-                (Candidate.years_experience < 8, "5-8 yrs"),
-                (Candidate.years_experience < 12, "8-12 yrs"),
-                else_="12+ yrs",
-            ).label("bucket"),
-            func.count(Candidate.id).label("count"),
-        )
-        .where(
-            Candidate.years_experience.isnot(None),
-            Candidate.ingestion_status != "merged",
-        )
-        .group_by("bucket")
-        .order_by("bucket")
-    )
-    experience_distribution = [
-        ExperienceBucket(bucket=row.bucket, count=row.count)
-        for row in exp_result.all()
-    ]
+    sources = [SourceBreakdown(source=r[0], count=r[1]) for r in source_r.all()]
+    trends = [IngestionTrend(date=str(r.date), count=r.count) for r in trend_r.all()]
+    statuses = [StatusBreakdown(status=r[0], count=r[1]) for r in status_r.all()]
+    top_locations = [LocationCount(location=r[0], count=r[1]) for r in loc_r.all()]
+    experience_distribution = [ExperienceBucket(bucket=r.bucket, count=r.count) for r in exp_r.all()]
 
     return AnalyticsOverview(
         total_candidates=total_candidates,

@@ -8,7 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { api, setToken, clearToken, getToken } from "@/lib/api";
+import { api, setToken, clearToken, clearCache, getToken } from "@/lib/api";
 import type { User, TokenResponse } from "@/lib/types";
 
 interface AuthState {
@@ -90,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     clearToken();
+    clearCache();
     setTokenState(null);
     setUser(null);
   }, []);
