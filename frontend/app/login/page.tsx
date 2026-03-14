@@ -89,7 +89,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel — login form */}
-      <div className="flex w-full flex-col items-center justify-center bg-background px-4 lg:w-1/2">
+      <div className="flex w-full flex-col items-center justify-center bg-background px-4 lg:w-1/2 glass-mesh">
         <div className="w-full max-w-[380px]">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
@@ -111,7 +111,7 @@ export default function LoginPage() {
           {/* Google */}
           <Button
             variant="outline"
-            className="mt-6 w-full gap-2.5 rounded-lg border-border bg-card py-5 text-sm font-medium transition-all hover:bg-secondary hover:shadow-sm"
+            className="mt-6 w-full gap-2.5 rounded-lg border-white/40 bg-white/40 py-5 text-sm font-medium backdrop-blur-sm transition-all hover:bg-white/60 hover:shadow-sm"
             onClick={handleGoogleLogin}
             disabled={googleLoading || loading}
           >
@@ -153,7 +153,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="rounded-lg border-border bg-card py-5 transition-all focus:border-terra/40 focus:ring-2 focus:ring-terra/10"
+                className="rounded-lg border-white/40 bg-white/40 py-5 backdrop-blur-sm transition-all focus:border-terra/40 focus:bg-white/60 focus:ring-2 focus:ring-terra/10"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -167,7 +167,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="rounded-lg border-border bg-card py-5 transition-all focus:border-terra/40 focus:ring-2 focus:ring-terra/10"
+                className="rounded-lg border-white/40 bg-white/40 py-5 backdrop-blur-sm transition-all focus:border-terra/40 focus:bg-white/60 focus:ring-2 focus:ring-terra/10"
               />
             </div>
             {error && (

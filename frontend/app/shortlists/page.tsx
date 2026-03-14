@@ -76,7 +76,7 @@ export default function ShortlistsPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <List className="size-5 text-primary" />

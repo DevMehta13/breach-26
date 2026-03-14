@@ -31,12 +31,12 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "hsl(221, 83%, 53%)",
-  "hsl(262, 83%, 58%)",
-  "hsl(330, 81%, 60%)",
-  "hsl(174, 72%, 40%)",
-  "hsl(43, 96%, 56%)",
-  "hsl(0, 84%, 60%)",
+  "#C4553A",
+  "#4A8C5C",
+  "#C4903A",
+  "#6B8CA3",
+  "#8B6B99",
+  "#A0785A",
 ];
 
 export default function AnalyticsPage() {
@@ -71,7 +71,7 @@ export default function AnalyticsPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <div className="mb-5 flex items-center gap-2">
             <BarChart3 className="size-5 text-primary" />
             <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">Analytics</h1>
@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
                       <Tooltip />
                       <Bar
                         dataKey="count"
-                        fill="hsl(221, 83%, 53%)"
+                        fill="#C4553A"
                         radius={[4, 4, 0, 0]}
                       />
                     </BarChart>

@@ -20,14 +20,14 @@ export function Topbar() {
     : "?";
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-md">
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-white/30 bg-[rgba(245,240,235,0.5)] px-6 backdrop-blur-xl shadow-[inset_0_-1px_0_rgba(255,255,255,0.3)] dark:bg-[rgba(26,26,24,0.5)] dark:border-white/[0.06]">
       {/* Left: Cmd+K hint */}
       <button
         onClick={() => {
           const event = new KeyboardEvent("keydown", { key: "k", metaKey: true });
           document.dispatchEvent(event);
         }}
-        className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground transition-all hover:border-foreground/20 hover:shadow-sm"
+        className="flex items-center gap-1.5 rounded-lg border border-white/40 bg-white/30 px-2.5 py-1 text-xs text-muted-foreground backdrop-blur-sm transition-all hover:border-white/60 hover:bg-white/50 hover:shadow-sm"
       >
         <Command className="size-3" />
         <span>Search...</span>

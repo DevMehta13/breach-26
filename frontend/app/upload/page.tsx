@@ -169,7 +169,7 @@ export default function UploadPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <div className="mb-5 flex items-center justify-between">
             <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">Upload &amp; Sync</h1>
             <div className="flex items-center gap-4">
@@ -209,10 +209,10 @@ export default function UploadPage() {
               <CardContent>
                 <div
                   {...getRootProps()}
-                  className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-10 transition-colors cursor-pointer ${
+                  className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 backdrop-blur-sm transition-all cursor-pointer ${
                     isDragActive
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/40"
+                      ? "border-terra/40 bg-terra/5"
+                      : "border-white/50 bg-white/20 hover:border-terra/30 hover:bg-white/40"
                   } ${uploading ? "pointer-events-none opacity-60" : ""}`}
                 >
                   <input {...getInputProps()} />
@@ -276,10 +276,10 @@ export default function UploadPage() {
               <CardContent>
                 <div
                   {...getLinkedinRootProps()}
-                  className={`flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-10 transition-colors cursor-pointer ${
+                  className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-10 backdrop-blur-sm transition-all cursor-pointer ${
                     isLinkedinDragActive
                       ? "border-[#0A66C2] bg-[#0A66C2]/5"
-                      : "border-[#0A66C2]/30 hover:border-[#0A66C2]/60"
+                      : "border-[#0A66C2]/20 bg-white/20 hover:border-[#0A66C2]/40 hover:bg-white/40"
                   } ${linkedinUploading ? "pointer-events-none opacity-60" : ""}`}
                 >
                   <input {...getLinkedinInputProps()} />

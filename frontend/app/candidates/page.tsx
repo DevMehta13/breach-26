@@ -58,7 +58,7 @@ export default function CandidatesPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <div className="mb-6 flex items-end justify-between animate-rise">
             <div>
               <h1 className="font-[family-name:var(--font-display)] text-2xl tracking-tight">

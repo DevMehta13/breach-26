@@ -48,7 +48,7 @@ export default function SearchPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           {/* Hero search area */}
           <div className={`mx-auto transition-all duration-500 ${searched ? "max-w-full" : "max-w-2xl pt-16"}`}>
             {!searched && (
@@ -77,7 +77,7 @@ export default function SearchPage() {
                 </div>
                 <input
                   type="text"
-                  className="w-full rounded-xl border border-border bg-card py-4 pl-12 pr-4 text-[15px] shadow-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-terra/30 focus:shadow-md focus:ring-2 focus:ring-terra/10"
+                  className="w-full rounded-xl border border-white/40 bg-[rgba(253,251,248,0.55)] py-4 pl-12 pr-4 text-[15px] shadow-sm outline-none backdrop-blur-xl transition-all placeholder:text-muted-foreground/60 focus:border-terra/30 focus:bg-[rgba(253,251,248,0.75)] focus:shadow-md focus:ring-2 focus:ring-terra/10"
                   placeholder='Try "Senior React developer in New York with 5+ years"'
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -113,7 +113,7 @@ export default function SearchPage() {
                   <button
                     key={s}
                     onClick={() => { setQuery(s); }}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-all hover:bg-secondary hover:shadow-sm"
+                    className="rounded-full border border-white/40 bg-white/40 px-3 py-1.5 text-xs text-muted-foreground backdrop-blur-sm transition-all hover:bg-white/60 hover:shadow-sm"
                   >
                     {s}
                   </button>

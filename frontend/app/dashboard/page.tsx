@@ -234,7 +234,7 @@ export default function DashboardPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-6 lg:p-8 glass-mesh">
           {/* Greeting */}
           <div className="mb-6 animate-rise">
             <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight">

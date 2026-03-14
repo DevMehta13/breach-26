@@ -105,7 +105,7 @@ export default function CandidateProfilePage() {
         <Sidebar />
         <div className="flex flex-1 flex-col pl-[220px]">
           <Topbar />
-          <main className="flex-1 space-y-6 p-8">
+          <main className="flex-1 space-y-6 p-8 glass-mesh">
             <Skeleton className="h-8 w-64 rounded-lg" />
             <Skeleton className="h-48 w-full rounded-2xl" />
           </main>
@@ -124,7 +124,7 @@ export default function CandidateProfilePage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           {/* Top bar */}
           <div className="mb-6 flex items-center justify-between animate-rise">
             <Button

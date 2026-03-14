@@ -70,7 +70,7 @@ export default function ComparePage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <div className="mb-5 flex items-center gap-2">
             <ArrowLeftRight className="size-5 text-primary" />
             <h1 className="font-[family-name:var(--font-display)] text-xl font-semibold tracking-tight">Candidate Comparison</h1>

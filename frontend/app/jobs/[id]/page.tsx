@@ -58,7 +58,7 @@ export default function JobDetailPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8"><Skeleton className="h-64 w-full" /></main>
+        <main className="flex-1 p-8 glass-mesh"><Skeleton className="h-64 w-full" /></main>
       </div>
     </div>
   );
@@ -70,7 +70,7 @@ export default function JobDetailPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <Button variant="ghost" size="sm" className="mb-4" onClick={() => router.push("/jobs")}>
             <ArrowLeft className="mr-1 size-4" />Back to Jobs
           </Button>

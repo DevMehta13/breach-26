@@ -49,7 +49,7 @@ export default function ShortlistDetailPage() {
         <Sidebar />
         <div className="flex flex-1 flex-col pl-[220px]">
           <Topbar />
-          <main className="flex-1 p-8 space-y-4">
+          <main className="flex-1 p-8 space-y-4 glass-mesh">
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-48 w-full" />
           </main>
@@ -65,7 +65,7 @@ export default function ShortlistDetailPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <Button
             variant="ghost"
             size="sm"

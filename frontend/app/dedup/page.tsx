@@ -211,7 +211,7 @@ export default function DedupQueuePage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           {/* Header */}
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -282,7 +282,7 @@ export default function DedupQueuePage() {
           )}
 
           {/* Status filter tabs */}
-          <div className="mb-4 flex gap-1 rounded-lg border bg-muted/30 p-1 w-fit">
+          <div className="mb-4 flex gap-1 rounded-lg border border-white/40 bg-white/30 p-1 w-fit backdrop-blur-sm">
             {statusTabs.map((tab) => (
               <button
                 key={tab.key}

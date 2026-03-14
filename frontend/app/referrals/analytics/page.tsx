@@ -62,7 +62,7 @@ export default function ReferralAnalyticsPage() {
       <Sidebar />
       <div className="flex flex-1 flex-col pl-[220px]">
         <Topbar />
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-8 glass-mesh">
           <Button variant="ghost" size="sm" className="mb-4" onClick={() => router.push("/referrals")}>
             <ArrowLeft className="mr-1 size-4" />Back to Referrals
           </Button>
