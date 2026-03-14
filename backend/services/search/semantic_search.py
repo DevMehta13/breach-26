@@ -19,7 +19,7 @@ from backend.models.candidate import Candidate
 from backend.services.search.query_analyzer import SearchIntent
 
 
-_VALID_STATUSES = ["completed", "ingested", "merged", "needs_review", "pending_review"]
+_VALID_STATUSES = ["completed", "ingested", "needs_review", "pending_review"]
 
 _STOP_WORDS = frozenset({
     "the", "and", "for", "with", "who", "find", "get", "show", "need",
