@@ -27,7 +27,8 @@ const WsContext = createContext<WsState>({
   incrementCount: () => {},
 });
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const WS_URL = API_URL.replace(/^http/, "ws");
 
 export function WebSocketProvider({ children }: { children: ReactNode }) {
   const { token } = useAuth();
